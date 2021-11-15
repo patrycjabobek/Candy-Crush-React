@@ -17,7 +17,7 @@ function App() {
     const [currentColorArrangement, setCurrentColorArrangement] = useState<string[]>([] )
 
     function checkForColumnOfFour() {
-        for (let i = 0; i < 39; i++) {
+        for (let i = 0; i <= 39; i++) {
             const columnOfFour = [i, i + width, i + width * 2, i + width * 3];
             const decidedColor = currentColorArrangement[i];
 
@@ -64,6 +64,33 @@ function App() {
         }
     }
 
+    function moveIntoSquareBelow() {
+        for (let i = 0; i < 55; i++) {
+            const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
+            const isFirstRow = firstRow.includes(i);
+
+            if (isFirstRow && currentColorArrangement[i] === '') {
+                let randomNumber = Math.floor(Math.random() * candyColours.length);
+                currentColorArrangement[i] = candyColours[randomNumber];
+            }
+            if ((currentColorArrangement[i + width]) === '') {
+                currentColorArrangement[i + width] = currentColorArrangement[i];
+                currentColorArrangement[i] = '';
+            }
+        }
+    }
+
+    function dragStart() {
+        console.log('start')
+    }
+
+    function dragDrop() {
+        console.log('drop')
+    }
+
+    function dragEnd() {
+        console.log('end')
+    }
     function createBoard() {
         const randomColorArrangement = [];
 
@@ -86,10 +113,11 @@ function App() {
             checkForColumnOfThree();
             checkForRowOfFour();
             checkForRowOfThree();
+            moveIntoSquareBelow();
             setCurrentColorArrangement([...currentColorArrangement])
         }, 100)
         return () => clearInterval(timer);
-    }, [checkForColumnOfThree(), checkForColumnOfFour(),checkForRowOfThree(),checkForRowOfFour(),  currentColorArrangement])
+    }, [moveIntoSquareBelow(),  checkForColumnOfFour(),checkForRowOfThree(),checkForRowOfFour(),  currentColorArrangement])
 
 
   return (
@@ -100,6 +128,14 @@ function App() {
                     key={index}
                     style={{backgroundColor: candyColor}}
                     alt={candyColor}
+                    data-id={index}
+                    draggable={true}
+                    onDragStart={dragStart}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDragEnter={(e) => e.preventDefault()}
+                    onDragLeave={(e) => e.preventDefault()}
+                    onDrop={dragDrop}
+                    onDragEnd={dragEnd}
                 />)
             )}
         </div>
